@@ -1,107 +1,50 @@
-
-<!DOCTYPE html><html><head>
-<title>CITRA</title>
-<style>div a img{visibility:hidden;}body{margin:0;background-color: black;}</style>
-<meta name='viewport' content='width=device-width, initial-scale=1.0' />
-<meta name="referrer" content="no-referrer" />
-  
-<script src='https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.5/shaka-player.ui.min.js' crossorigin='anonymous'></script>
-<!-- <script src="./shaka.php?js=16888&libraryfont=Arial"></script> -->
-<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.5/controls.min.css' crossorigin='anonymous' />
-
-<center><b><p style="color:white; opacity:0.27;">EJALTV</b></p>
-<body>
-<style>
-    /* Add your gradient styles here */
-    .shaka-seek-bar-container .shaka-seek-bar {
-      background:  linear-gradient(to right, #051937, #00205b, #00247e, #22229f, #510dbc);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ASTRO CITRA</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background: #000;
     }
-.shaka-volume-bar-container .shaka-volume-bar {
-      background:  linear-gradient(to right, #051937, #00205b, #00247e, #22229f, #510dbc);
+    video {
+      width: 100%;
+      max-width: 800px;
+      height: auto;
     }
-    /* Change color of all Shaka Player SVG icons */
-    .shaka-video-container .material-icons-round {
-      color: #00abe2;
-    }
-.shaka-spinner-path {
-  stroke-dasharray: 1, 2000;
-  stroke-dashoffset: 0;
-  animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
-  stroke-linecap: round;
-}
-@keyframes color {
-  100%,
-  0% {
-    stroke: #d62d20;
-  }
-  40% {
-    stroke: #0057e7;
-  }
-  66% {
-    stroke: #008744;
-  }
-  80%,
-  90% {
-    stroke: #ffa700;
-  }
-}
   </style>
-<div data-shaka-player-container style='position:absolute;z-index: -1;top: 0;left: 0;width: 100%; height: 100%;object-fit: cover;'><video autoplay data-shaka-player poster="https://github.com/hpmurah2u/pejal/blob/PEJAL/ejaltv%20loading%20baru.png?raw=true" id='video' style='width:100%;height:100%;'></video>
-</div>
+</head>
+<body>
+
+  <video id="video" controls></video>
+
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <script>
+    const video = document.getElementById('video');
+    const videoSrc = "https://5centscdn-sge1.mobileads.cloud/tokens/citra/2411231/tracks-v1a1/mono.m3u8";
 
-const manifestUri = "https://linearjitp-playback.astro.com.my/dash-wv/linear/2700/default_ott.mpd";
-async function init() {
-const video = document.getElementById('video');
-const ui = video['ui'];
-const controls = ui.getControls();
-const player = controls.getPlayer();
-window.player = player;
-window.ui = ui;
-player.setTextTrackVisibility(true);
-player.configure({
-drm: {"clearKeys": {
-      '84bf9ad6848be7db20f9d16823deef10':'654f2d25a5bfb27c9e5ae0852584a166'},
-},
-  
-abr: {
-				defaultBandwidthEstimate: 16888,
-                enabled: true,
-                restrictions: {
-  			    minHeight: 359,
-  			    maxHeight: 720  		        }
-			},
-});
-player.addEventListener('error', onPlayerErrorEvent);
-controls.addEventListener('error', onUIErrorEvent);
-try {
-await player.load(manifestUri);
-console.log('The video has now been loaded!');
-} catch (error) {
-onPlayerError(error);
-}
-
-
-
-}
-
-function onPlayerErrorEvent(errorEvent) {
-onPlayerError(event.detail);
-}
-
-function onPlayerError(error) {
-console.error('Error code', error.code, 'object', error);
-}
-
-function onUIErrorEvent(errorEvent) {
-onPlayerError(event.detail);
-}
-
-function initFailed(errorEvent) {
-console.error('Unable to load the UI library!');
-}
-document.addEventListener('shaka-ui-loaded', init);
-document.addEventListener('shaka-ui-load-failed', initFailed);
-  
-  
+    if (Hls.isSupported()) {
+      const hls = new Hls();
+      hls.loadSource(videoSrc);
+      hls.attachMedia(video);
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        video.play();
+      });
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = videoSrc;
+      video.addEventListener('loadedmetadata', () => {
+        video.play();
+      });
+    } else {
+      alert("Maaf, browser kamu tidak menyokong main balik HLS.");
+    }
   </script>
+
+</body>
+</html>
